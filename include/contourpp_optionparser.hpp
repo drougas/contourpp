@@ -59,7 +59,7 @@ struct Arg: public option::Arg
   static option::ArgStatus TimeDuration(const option::Option& option, bool msg)
   {
     const char* str = option.arg;
-    char* endptr = NULL;
+    const char* endptr = NULL;
 
     if (!str || !str[0]) {
       if (msg)
@@ -70,28 +70,25 @@ struct Arg: public option::Arg
     if (str[0] == '+' || str[0] == '-')
       ++str;
 
-    if (!strtol(str, &endptr, 10) || endptr <= str || *endptr != ':') { // hours
+    endptr = str;
+    while ((*endptr >= '0') && (*endptr <= '9'))
+        ++endptr; // hours
+    if ((endptr <= str) || (*endptr != ':')) {
       if (msg)
         printError("Option '", option, "' has to be formatted as [-]HH:MM[:SS]\n");
       return option::ARG_ILLEGAL;
     }
 
-    str = endptr + 1;
-    endptr = 0;
+    str = ++endptr;
+    while ((*endptr >= '0') && (*endptr <= '9'))
+        ++endptr; // minutes
 
-    if (!strtol(str, &endptr, 10) || endptr <= str) { // minutes
-      if (msg)
-        printError("Option '", option, "' has to be formatted as [-]HH:MM[:SS]\n");
-      return option::ARG_ILLEGAL;
-    }
-
-    if (*endptr == 0)
-      return option::ARG_OK;
-
-    if (*endptr == ':') { // seconds
-      str = endptr + 1;
-      endptr = 0;
-      if (strtol(str, &endptr, 10) && endptr > str && *endptr == 0)
+    if (str < endptr) {
+      if (*endptr == ':') { // seconds
+        str = ++endptr;
+        while ((*endptr >= '0') && (*endptr <= '9')) ++endptr;
+      }
+      if ((str < endptr) && (*endptr == 0))
         return option::ARG_OK;
     }
 
