@@ -11,11 +11,14 @@ void lowLevelAPI()
 {
   contourpp::interface device;
   const char *begin_text = NULL, *end_text = NULL;
-  std::string text;
+  //std::string text;
+  std::ostream_iterator<char> oiter(std::cout);
   while (device.sync(begin_text, end_text)) {
-    text.clear();
-    std::copy(begin_text, end_text, std::back_inserter(text));
-    std::cout << text << std::endl;
+    //text.clear();
+    std::copy(begin_text, end_text, oiter);
+    *oiter = '\n';
+    ++oiter;
+    //std::cout << text << std::endl;
   }
 }
 
@@ -24,7 +27,9 @@ void highLevelAPI(std::vector<const char*> const& filenames, bool print_bayer_fo
   const boost::posix_time::time_duration& d, bool only_after_meal_hours)
 {
   contourpp::record_parser parser;
-  std::vector<contourpp::record> records(128);
+  std::vector<contourpp::record> records;
+
+  records.reserve(128);
 
   if (!filenames.empty()) {
     for (std::vector<const char*>::const_iterator f = filenames.begin(); f != filenames.end(); ++f) {
