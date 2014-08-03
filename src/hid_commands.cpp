@@ -107,7 +107,7 @@ static inline void read(hid_device* const& hid, std::vector<char>& ret)
   } while (n == maxpayload);
 
 #ifdef CONTOURPP_DEBUG_HID_COMM
-  std::cerr << "*** " << to_string(ret.begin(), ret.end()) << std::endl;
+  std::cerr << "*** " << interface::to_string(ret.data(), ret.data() + ret.size()) << std::endl;
 #endif
 }
 
@@ -116,7 +116,7 @@ static inline void write(hid_device* const& hid, const char& c)
   char buf[5] = { 'A', 'B', 'C', 1, c };
 
 #ifdef CONTOURPP_DEBUG_HID_COMM
-  std::cerr << ">>> " << to_string(&c, (&c) + 1) << std::endl;
+  std::cerr << ">>> " << interface::to_string(&c, (&c) + 1) << std::endl;
 #endif
 
 #ifdef CONTOURPP_USE_LIBHID
@@ -286,7 +286,7 @@ bool interface::sync(const char*& result_begin, const char*& result_end)
         ++foo_;
       }
       else if (data_.back() == ENQ) { // got an <ENQ>, send <ACK>
-        write(hid_, ACK);
+        //write(hid_, ACK);
         currecno_ = 8;
       }
     }
