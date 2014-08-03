@@ -27,7 +27,7 @@ public:
   record() : index_(0), value_(0), tags_(0), min_after_meal_(0) {}
 
   record(const record& o)
-    : datetime_(o.datetime_), index_(o.index_),
+    : datetime_(o.datetime_), index_(o.index_), value_(o.value_),
     tags_(o.tags_), min_after_meal_(o.min_after_meal_) {}
 
   record(const char* const& b, const char* const& e, const char& field_sep = '|')
@@ -95,8 +95,7 @@ public:
     s.imbue(std::locale(s.getloc(), facet));
 
     s << datetime_ << field_sep << value_
-      << field_sep << (is_before_food()? "1" : "")
-      << field_sep << (is_after_food()? "1" : "")
+      << field_sep << (is_before_food()? "1" : (is_after_food()? "2" : ""))
       << field_sep << (dont_feel_right()? "1" : "")
       << field_sep << (is_sick()? "1" : "")
       << field_sep << (has_stress()? "1" : "")
