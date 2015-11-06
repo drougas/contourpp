@@ -20,7 +20,11 @@
 using namespace contourpp;
 
 static const unsigned short vendor_id = 0x1A79; // Bayer
-static const unsigned short device_id = 0x6002; // Contour USB
+static const unsigned short device_ids[] = {
+  0x6002, // Contour USB
+  0x7410, // Contour Next USB
+  0x0000
+};
 static const char     blocksize = 64;
 
 static const char ACK = 0x06;
@@ -162,12 +166,20 @@ bool interface::open()
   data_.reserve(5 * size_t(blocksize));
 
 #ifdef CONTOURPP_USE_LIBHID
-  static const HIDInterfaceMatcher matcher = { vendor_id, device_id, NULL, NULL, 0 };
+  HIDInterfaceMatcher matcher = { vendor_id, 0x0000, NULL, NULL, 0 };
+  int open_result = -1;
   if (!(hid_ = ::hid_new_HIDInterface()))
     throw std::runtime_error("hid_new_HIDInterface() failed. Not enough memory?");
-  test_ret("hid_force_open()", ::hid_force_open(hid_, 0, &matcher, 3));
+  for (int i = 0; device_ids[i] && (open_result < 0); ++i)
+  {
+    matcher.product_id = device_ids[o];
+    open_result = ::hid_force_open(hid_, 0, &matcher, 3);
+  }
+  test_ret("hid_force_open()", open_result);
 #else
-  if (!(hid_ = ::hid_open(vendor_id, device_id, NULL)))
+  for (int i = 0; device_ids[i] && !hid_; ++i)
+    hid_ = ::hid_open(vendor_id, device_ids[i], NULL);
+  if (!hid_)
     throw std::runtime_error("hid_open() failed.");
 #endif
 
