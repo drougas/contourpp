@@ -37,7 +37,7 @@ static const char STX = 0x02;
 static const char CR  = '\r';
 static const char LF  = '\n';
 
-static inline void test_ret(const char* const& name, const int& ret)
+static inline void test_ret(const char* name, int ret)
 {
 #ifdef CONTOURPP_USE_LIBHID
   if (ret != 0)
@@ -52,8 +52,8 @@ static inline void test_ret(const char* const& name, const int& ret)
   }
 }
 
-std::string interface::to_string(const char* first, const char* const& last,
-  const char* const& prefix, const char* const& suffix)
+std::string interface::to_string(const char* first, const char* last,
+  const char* prefix, const char* suffix)
 {
   std::stringstream sstream;
   sstream << std::hex << prefix;
@@ -84,7 +84,7 @@ std::string interface::to_string(const char* first, const char* const& last,
   return sstream.str();
 }
 
-static inline void read(hid_device* const& hid, std::vector<char>& ret)
+static inline void read(hid_device* hid, std::vector<char>& ret)
 {
   static const char maxpayload = blocksize - 4;
   static const char uisize = (blocksize / sizeof(size_t)) + ((blocksize % sizeof(size_t)) != 0);
@@ -170,9 +170,8 @@ bool interface::open()
   int open_result = -1;
   if (!(hid_ = ::hid_new_HIDInterface()))
     throw std::runtime_error("hid_new_HIDInterface() failed. Not enough memory?");
-  for (int i = 0; device_ids[i] && (open_result < 0); ++i)
-  {
-    matcher.product_id = device_ids[o];
+  for (int i = 0; device_ids[i] && (open_result < 0); ++i) {
+    matcher.product_id = device_ids[i];
     open_result = ::hid_force_open(hid_, 0, &matcher, 3);
   }
   test_ret("hid_force_open()", open_result);
@@ -203,7 +202,7 @@ bool interface::close()
   return true;
 }
 
-static inline unsigned char hex_char_to_number(const char& c)
+static inline unsigned char hex_char_to_number(char c)
 {
   if ((c >= '0') && (c <= '9')) return c - '0';
   if ((c >= 'A') && (c <= 'F')) return c - 'A' + 10;
@@ -352,7 +351,7 @@ bool interface::ensurecommand()
   return (state_ == command);
 }
 
-const std::vector<char>& interface::send_command(const char& c)
+const std::vector<char>& interface::send_command(char c)
 {
   // Enter remote command mode if needed
 
