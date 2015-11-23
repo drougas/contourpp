@@ -4,6 +4,8 @@
 #include <vector>
 #include <unistd.h>
 
+//#define CONTOURPP_DEBUG_HID_COMM 1
+
 #ifdef CONTOURPP_DEBUG_HID_COMM
 #include <iostream>
 #endif
@@ -171,10 +173,16 @@ bool interface::open()
   if (!(hid_ = ::hid_new_HIDInterface()))
     throw std::runtime_error("hid_new_HIDInterface() failed. Not enough memory?");
   for (int i = 0; device_ids[i] && (open_result < 0); ++i) {
+#ifdef CONTOURPP_DEBUG_HID_COMM
+  std::cerr << "/// Searching for " << std::hex << device_ids[i] << std::dec << std::endl;
+#endif
     matcher.product_id = device_ids[i];
     open_result = ::hid_force_open(hid_, 0, &matcher, 3);
   }
   test_ret("hid_force_open()", open_result);
+#ifdef CONTOURPP_DEBUG_HID_COMM
+  std::cerr << "/// Found " << std::hex << device_ids[i] << std::dec << std::endl;
+#endif
 #else
   for (int i = 0; device_ids[i] && !hid_; ++i)
     hid_ = ::hid_open(vendor_id, device_ids[i], NULL);
