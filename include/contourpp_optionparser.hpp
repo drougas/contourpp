@@ -100,13 +100,17 @@ struct Arg: public option::Arg
 
 
 enum optionIndex {
-  UNKNOWN       = 0,
-  HELP          = UNKNOWN + 1,
-  LOWLEVEL      = HELP + 1,
-  OLDFORMAT     = LOWLEVEL + 1,
-  AFTERMEALONLY = OLDFORMAT + 1,
-  INFILE        = AFTERMEALONLY + 1,
-  TIMESHIFT     = INFILE + 1
+  UNKNOWN = 0,
+  HELP,
+  LOWLEVEL,
+  OLDFORMAT,
+  AFTERMEALONLY,
+  INFILE,
+  TIMESHIFT,
+  PRINTGLUCOSE,
+  PRINTINSULINSHORT,
+  PRINTINSULINLONG,
+  PRINTCARBS,
 };
 
 
@@ -125,13 +129,25 @@ static const option::Descriptor usage[] =
     "  -B  \t--bayer-format  \tPrint output in the Bayer format (as given by the meter)." },
 
   {AFTERMEALONLY, 0, "a", "after-meal-only", Arg::None,
-    "  -a  \t--after-meal-only  \tFilter entries with after meal hours." },
+    "  -a  \t--after-meal-only  \tPrint only entries with after meal hours." },
 
   {INFILE,        0, "f", "input-file",      Arg::NonEmpty,
     "  -f <input_file>  \t--input-file=<input_file>  \tRead the entries from the infile." },
 
   {TIMESHIFT,     0, "t", "time-shift",      Arg::TimeDuration,
     "  -t <timeshift>  \t--time-shift=<timeshift>  \tShift the time of each reading (timeshift format: [-]HH:MM[:SS])." },
+
+  {PRINTGLUCOSE, 0, "g", "glucose", Arg::None,
+    "  -g  \t--glucose-only  \tPrint glucose entries." },
+
+  {PRINTINSULINSHORT, 0, "i", "insulin-short", Arg::None,
+    "  -i  \t--insulin-short  \tPrint short insulin entries." },
+
+  {PRINTINSULINLONG, 0, "I", "insulin-long", Arg::None,
+    "  -I  \t--insulin-long  \tPrint long insulin entries." },
+
+  {PRINTCARBS, 0, "c", "carbs", Arg::None,
+    "  -c  \t--carbs  \tPrint carbs entries." },
 
   {UNKNOWN,       0, "" , "",                Arg::None,
     "\nExamples:\n"

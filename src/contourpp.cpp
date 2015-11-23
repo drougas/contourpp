@@ -7,7 +7,7 @@
 #include "contourpp_driver.hpp"
 #include "contourpp_optionparser.hpp"
 
-void lowLevelAPI()
+static void lowLevelAPI()
 {
   contourpp::interface device;
   const char *begin_text = NULL, *end_text = NULL;
@@ -22,9 +22,18 @@ void lowLevelAPI()
   }
 }
 
+static unsigned char getRecordType(const contourpp::record& rec)
+{
+  if (rec.is_glucose()) return rec.min_after_meal()? 17 : 1;
+  if (rec.is_insulin_short()) return 2;
+  if (rec.is_insulin_long()) return 4;
+  if (rec.is_carbs()) return 8;
+  return 128;
+}
 
-void highLevelAPI(std::vector<const char*> const& filenames, bool print_bayer_format,
-  const boost::posix_time::time_duration& d, bool only_after_meal_hours)
+static void highLevelAPI(std::vector<const char*> const& filenames,
+  bool print_bayer_format, const boost::posix_time::time_duration& d,
+  unsigned char recordfilter)
 {
   contourpp::record_parser parser;
   std::vector<contourpp::record> records;
@@ -59,7 +68,7 @@ void highLevelAPI(std::vector<const char*> const& filenames, bool print_bayer_fo
   }
   if (print_bayer_format) {
     for (i = records.begin(); i != e; ++i) {
-      if (!only_after_meal_hours || i->min_after_meal()) {
+      if (getRecordType(*i) & recordfilter) {
         i->print_bayer(std::cout);
         std::cout << std::endl;
       }
@@ -67,7 +76,7 @@ void highLevelAPI(std::vector<const char*> const& filenames, bool print_bayer_fo
   }
   else {
     for (i = records.begin(); i != e; ++i)
-      if (!only_after_meal_hours || i->min_after_meal())
+      if (getRecordType(*i) & recordfilter)
         std::cout << (*i) << std::endl;
   }
 }
@@ -85,6 +94,27 @@ int main(int argc, char* argv[])
     return 0;
   }
 
+  unsigned char recordfilter = 0xFF;
+  if (options[PRINTGLUCOSE]) {
+    recordfilter = 1;
+  }
+  if (options[PRINTINSULINSHORT]) {
+    if (0xFF == recordfilter) recordfilter = 0;
+    recordfilter |= 2;
+  }
+  if (options[PRINTINSULINLONG]) {
+    if (0xFF == recordfilter) recordfilter = 0;
+    recordfilter |= 4;
+  }
+  if (options[PRINTCARBS]) {
+    if (0xFF == recordfilter) recordfilter = 0;
+    recordfilter |= 8;
+  }
+  if (options[AFTERMEALONLY]) {
+    if (0xFF == recordfilter) recordfilter = 0;
+    recordfilter |= 16;
+  }
+
   std::vector<const char*> filenames;
   for (const option::Option* opt = options[INFILE]; opt; opt = opt->next())
     filenames.push_back(opt->arg);
@@ -99,7 +129,7 @@ int main(int argc, char* argv[])
     if (options[LOWLEVEL])
       lowLevelAPI();
     else
-      highLevelAPI(filenames, options[OLDFORMAT], d, options[AFTERMEALONLY]);
+      highLevelAPI(filenames, options[OLDFORMAT], d, recordfilter);
   } catch(std::runtime_error e) {
     std::cerr << e.what() << std::endl;
     return -1;

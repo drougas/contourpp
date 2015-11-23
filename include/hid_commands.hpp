@@ -22,8 +22,8 @@ namespace contourpp
 class interface
 {
 public:
-  static std::string to_string(const char* first, const char* const& last,
-      const char* const& prefix = "", const char* const& suffix = "");
+  static std::string to_string(const char* first, const char* last,
+      const char* prefix = "", const char* suffix = "");
 
 private:
   enum State { establish = 0, data = 1, precommand = 2, command = 3 };
@@ -60,7 +60,7 @@ public:
   bool sync(const char*& result_begin, const char*& result_end);
 
   // Send a command to the meter
-  const std::vector<char>& send_command(const char& c);
+  const std::vector<char>& send_command(char c);
 };
 
 } // namespace contourpp
