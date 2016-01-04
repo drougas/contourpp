@@ -3,6 +3,21 @@ project (contourpp)
 
 set(CMAKE_USE_RELATIVE_PATHS ON)
 
+if (CMAKE_BUILD_TYPE STREQUAL "")
+  string(REGEX MATCH "([A-Za-z]+)/?$" binary_dir_basename ${CMAKE_BINARY_DIR})
+  string(TOLOWER "${binary_dir_basename}" binary_dir_basename)
+
+  if ("${binary_dir_basename}" STREQUAL "debug")
+    set(CMAKE_BUILD_TYPE "Debug")
+  elseif ("${binary_dir_basename}" STREQUAL "release")
+    set(CMAKE_BUILD_TYPE "Release")
+  elseif ("${binary_dir_basename}" STREQUAL "relwithdebinfo")
+    set(CMAKE_BUILD_TYPE "RelWithDebInfo")
+  elseif ("${binary_dir_basename}" STREQUAL "minsizerel")
+    set(CMAKE_BUILD_TYPE "MinSizeRel")
+  endif ("${binary_dir_basename}" STREQUAL "debug")
+endif (CMAKE_BUILD_TYPE STREQUAL "")
+
 include_directories (/usr/local/include)
 include_directories (${contourpp_SOURCE_DIR}/include)
 
