@@ -18,7 +18,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "")
   endif ("${binary_dir_basename}" STREQUAL "debug")
 endif (CMAKE_BUILD_TYPE STREQUAL "")
 
-include_directories (/usr/local/include)
 include_directories (${contourpp_SOURCE_DIR}/include)
 
 set(Boost_USE_STATIC_LIBS OFF)
