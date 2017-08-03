@@ -25,6 +25,7 @@ static const unsigned short vendor_id = 0x1A79; // Bayer
 static const unsigned short device_ids[] = {
   0x6002, // Contour USB
   0x7410, // Contour Next USB
+  0x7800, // Contour Next ONE
   0x0000
 };
 static const char     blocksize = 64;
