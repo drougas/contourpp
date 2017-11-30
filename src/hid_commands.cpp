@@ -25,6 +25,7 @@ static const unsigned short vendor_id = 0x1A79; // Bayer
 static const unsigned short device_ids[] = {
   0x6002, // Contour USB
   0x7410, // Contour Next USB
+  0x7800, // Contour Next ONE
   0x0000
 };
 static const char     blocksize = 64;
@@ -36,6 +37,7 @@ static const char ETB = 0x17;
 static const char ETX = 0x03;
 static const char NAK = 0x15;
 static const char STX = 0x02;
+static const char CAN = 0x18;
 static const char CR  = '\r';
 static const char LF  = '\n';
 
@@ -73,6 +75,7 @@ std::string interface::to_string(const char* first, const char* last,
     else if (c == ETX) sstream << "<ETX>";
     else if (c == NAK) sstream << "<NAK>";
     else if (c == STX) sstream << "<STX>";
+    else if (c == CAN) sstream << "<CAN>";
     else if (::isprint(c)) sstream << c;
     else {
       n = (unsigned char)c;
@@ -291,7 +294,7 @@ bool interface::sync(const char*& result_begin, const char*& result_end)
 {
   result_begin = result_end = NULL;
   if (state_ == establish)
-    write(hid_, EOT);
+    write(hid_, ENQ);
   else if (state_ != data)
     return false;
 
@@ -305,7 +308,7 @@ bool interface::sync(const char*& result_begin, const char*& result_end)
         ++foo_;
       }
       else if (data_.back() == ENQ) { // got an <ENQ>, send <ACK>
-        //write(hid_, ACK);
+        write(hid_, ACK);
         currecno_ = 8;
       }
     }
@@ -327,6 +330,12 @@ bool interface::sync(const char*& result_begin, const char*& result_end)
     if (parsed) { // parsed frame, send ACK
       write(hid_, ACK);
       state_ = data;
+      if (result_begin != NULL) { // Message Terminator Record frame received, write CAN, done
+        if (result_begin[0] == 'L') { 
+          write(hid_, CAN);
+          return false;
+        }
+      }
     }
     else
       write(hid_, NAK);
