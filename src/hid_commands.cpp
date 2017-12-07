@@ -37,7 +37,6 @@ static const char ETB = 0x17;
 static const char ETX = 0x03;
 static const char NAK = 0x15;
 static const char STX = 0x02;
-static const char CAN = 0x18;
 static const char CR  = '\r';
 static const char LF  = '\n';
 
@@ -75,7 +74,6 @@ std::string interface::to_string(const char* first, const char* last,
     else if (c == ETX) sstream << "<ETX>";
     else if (c == NAK) sstream << "<NAK>";
     else if (c == STX) sstream << "<STX>";
-    else if (c == CAN) sstream << "<CAN>";
     else if (::isprint(c)) sstream << c;
     else {
       n = (unsigned char)c;
@@ -330,9 +328,8 @@ bool interface::sync(const char*& result_begin, const char*& result_end)
     if (parsed) { // parsed frame, send ACK
       write(hid_, ACK);
       state_ = data;
-      if (result_begin != NULL) { // Message Terminator Record frame received, write CAN, done
+      if (result_begin != NULL) { // Message Terminator Record frame received, done
         if (result_begin[0] == 'L') { 
-          write(hid_, CAN);
           return false;
         }
       }
