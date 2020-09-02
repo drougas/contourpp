@@ -100,10 +100,10 @@ public:
     s << field_sep << field_sep << datetime_;
   }
 
-  bool parse_csv(const char* b, const char* const& e, const char& field_sep = ',');
+  bool parse_csv(const char* b, const char* e, char field_sep = ',');
 
   template <typename _Elem, typename _Traits>
-  void print_csv(std::basic_ostream<_Elem,_Traits>& s, const char& field_sep = ',') const
+  void print_csv(std::basic_ostream<_Elem,_Traits>& s, char field_sep = ',') const
   {
     boost::posix_time::time_facet *facet = new boost::posix_time::time_facet("%Y-%m-%d %H:%M");
     s.imbue(std::locale(s.getloc(), facet));
@@ -145,10 +145,10 @@ private:
   std::string product_, versions_, serial_, sku_, device_info_, patient_info_;
   size_t result_count_;
 
-  bool parse_H(const char*        b, const char* const& e);
-  bool parse_P(const char* const& b, const char* const& e);
-  bool parse_O(const char* const&  , const char* const&  ) { throw std::exception(); }
-  bool parse_R(const char* const& b, const char* const& e, record& rec) const {
+  bool parse_H(const char* b, const char* e);
+  bool parse_P(const char* b, const char* e);
+  bool parse_O(const char*  , const char*  ) { throw std::exception(); }
+  bool parse_R(const char* b, const char* e, record& rec) const {
     return rec.parse_bayer(b, e, field_sep_);
   }
 
@@ -157,7 +157,7 @@ public:
     : field_sep_('|'), repeat_sep_('\\'), comp_sep_('^'),
     escape_sep_('&'), result_count_(0) {}
 
-  bool parse(const char* const& b, const char* const& e, record& rec);
+  bool parse(const char* b, const char* e, record& rec);
   void get_all(std::istream& is, std::vector<record>& records);
   void get_all(std::vector<record>& records);
 };

@@ -43,7 +43,7 @@ private:
 
 public:
 
-  interface(bool const& doOpen = true)
+  explicit interface(bool doOpen = true)
     : hid_(NULL), state_(establish), foo_(0), currecno_(8)
   {
     if (doOpen)

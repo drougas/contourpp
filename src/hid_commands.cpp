@@ -118,7 +118,7 @@ static inline void read(hid_device* hid, std::vector<char>& ret)
 #endif
 }
 
-static inline void write(hid_device* const& hid, const char& c)
+static inline void write(hid_device* const& hid, char c)
 {
   char buf[5] = { 'A', 'B', 'C', 1, c };
 

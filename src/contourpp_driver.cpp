@@ -184,7 +184,7 @@ static short get_digits(const char* b, const char* e, int min_digits, int max_di
 }
 */
 
-bool contourpp::record::parse_csv(const char* b, const char* const& e, const char& field_sep)
+bool contourpp::record::parse_csv(const char* b, const char* e, char field_sep)
 {
   clear();
 
@@ -194,7 +194,7 @@ bool contourpp::record::parse_csv(const char* b, const char* const& e, const cha
   return false;
 }
 
-static inline const char* parse(const char* b, const char* const& e, std::string& s, const char& c)
+static inline const char* parse(const char* b, const char* e, std::string& s, char c)
 {
   s.clear();
   for (; (b < e) && (*b != c); ++b)
@@ -202,7 +202,7 @@ static inline const char* parse(const char* b, const char* const& e, std::string
   return b;
 }
 
-static inline const char* parse(const char* b, const char* const& e, std::string& s)
+static inline const char* parse(const char* b, const char* e, std::string& s)
 {
   s.clear();
   for (; b < e; ++b)
@@ -210,7 +210,7 @@ static inline const char* parse(const char* b, const char* const& e, std::string
   return e;
 }
 
-bool contourpp::record_parser::parse_H(const char* b, const char* const& e)
+bool contourpp::record_parser::parse_H(const char* b, const char* e)
 {
   field_sep_ = *b;
 
@@ -253,12 +253,12 @@ bool contourpp::record_parser::parse_H(const char* b, const char* const& e)
   return b < e;
 }
 
-bool contourpp::record_parser::parse_P(const char* const& b, const char* const& e)
+bool contourpp::record_parser::parse_P(const char* b, const char* e)
 {
   return ::parse(b + 1, e, patient_info_) <= e;
 }
 
-bool contourpp::record_parser::parse(const char* const& b, const char* const& e, record& rec)
+bool contourpp::record_parser::parse(const char* b, const char* e, record& rec)
 {
   bool result = false;
 
