@@ -1,10 +1,11 @@
 #ifndef CONTOURPP_DRIVER_H__
 #define CONTOURPP_DRIVER_H__
 
-#include <boost/date_time.hpp>
-//#include <boost/locale/date_time.hpp>
 #include <istream>
 #include <ostream>
+#include <vector>
+#include <boost/date_time.hpp>
+//#include <boost/locale/date_time.hpp>
 //#include <boost/date_time/posix_time/posix_time.hpp>
 //#include <boost/date_time/posix_time/posix_time_io.hpp>
 

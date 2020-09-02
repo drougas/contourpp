@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <iterator>
 #include "optionparser.h"
 
 struct Arg: public option::Arg

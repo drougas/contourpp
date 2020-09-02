@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iterator>
 #include <fstream>
 #include <exception>
 #include <string>
@@ -130,7 +131,7 @@ int main(int argc, char* argv[])
       lowLevelAPI();
     else
       highLevelAPI(filenames, options[OLDFORMAT], d, recordfilter);
-  } catch(std::runtime_error e) {
+  } catch(const std::runtime_error& e) {
     std::cerr << e.what() << std::endl;
     return -1;
   }

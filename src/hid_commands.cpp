@@ -329,7 +329,7 @@ bool interface::sync(const char*& result_begin, const char*& result_end)
       write(hid_, ACK);
       state_ = data;
       if (result_begin != NULL) { // Message Terminator Record frame received, done
-        if (result_begin[0] == 'L') { 
+        if (result_begin[0] == 'L') {
           return false;
         }
       }
